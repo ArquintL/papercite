@@ -1102,7 +1102,7 @@ class Papercite
         ?>
         <form method="post" accept-charset="UTF-8">
             <input type="hidden" name="papercite_post_id" value="<?php echo $post->ID ?>">
-            <table style="border-top: solid 1px #eee; border-bottom: solid 1px #eee; width: 100%">
+            <table style="border-top: solid 1px #eee; border-bottom: solid 1px #eee; width: 100%" class="papercite_bibfilter_table">
                 <tr>
                     <td>Authors:</td>
                     <td><select name="papercite_author" id="papercite_author">

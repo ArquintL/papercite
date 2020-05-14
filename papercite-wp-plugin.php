@@ -46,9 +46,26 @@ function papercite_init()
 
   // Initialise the object
     $papercite = new Papercite();
+  
+  add_shortcode('bibfilter', 'bibfilter_cb');
 }
 
 // --- Callback function ----
+/**
+ * @param $atts attributes to bibfilter
+ *
+ * @return mixed|string|string[]|null
+ */
+function &bibfilter_cb($atts)
+{
+  $atts_string = '[bibfilter';
+  foreach ($atts as $key => $value) {
+    $atts_string .= ' ' . $key . '=' . $value;
+    }
+  $atts_string .= ']';
+  return papercite_cb($atts_string);
+}
+
 /**
  * @param $myContent
  *
@@ -90,10 +107,10 @@ function &papercite_cb($myContent)
     $note_matches_count = preg_match_all('/\[ppcnote\](.+?)\[\/ppcnote\]/i',$text,$note_matches);
 
     if ($note_matches_count !== FALSE) {
-	    $ft_matches = $note_matches[1];
-	    foreach ($ft_matches as $match) {
-	        $papercite->textual_footnotes[] = $match;
-	    }
+      $ft_matches = $note_matches[1];
+      foreach ($ft_matches as $match) {
+          $papercite->textual_footnotes[] = $match;
+      }
     }*/
 
     $post_id = get_the_ID();
@@ -107,7 +124,7 @@ function &papercite_cb($myContent)
     );
 
     if ( count($papercite->getTextualFootnotes() ) > 0) {
-	    $text .= $papercite->showTextualFootnotes(get_the_ID());
+      $text .= $papercite->showTextualFootnotes(get_the_ID());
     }
 
     // digfish: reset the footnotes after the end of post/page
