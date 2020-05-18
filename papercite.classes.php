@@ -1069,6 +1069,28 @@ class Papercite
     }
 
     /**
+     * Extracts lastnames of all creators from entries
+     */
+    function getSurnames($entries)
+    {
+        $lastnames = array();
+        foreach($entries as $entry) {
+            if (array_key_exists('author', $entry)) {
+                $author = $entry['author'];
+                foreach($author->creators as $creator) {
+                    if (array_key_exists('surname', $creator)) {
+                        $lastname = $creator['surname'];
+                        if (!in_array($lastname, $lastnames)) {
+                            array_push($lastnames, $lastname);
+                        }
+                    }
+                }
+            }
+        }
+        return $lastnames;
+    }
+
+    /**
      * This does two things:
      * -dynamically creates html form based on parameters (author and menutype)
      * -rebuilds command which is then sent as the bibtex command
@@ -1086,19 +1108,38 @@ class Papercite
 
         $original_authors = Papercite::array_get($options, "author", "");
         $original_allow = Papercite::array_get($options, "allow", "");
+        $list_all_authors = Papercite::array_get($options, "list-all-authors", false);
         $filter_only_author = Papercite::array_get($options, "filter-only-author", false);
+
+        $result = NULL;
+        $options_modified = true;
+        if ($original_authors === "" && $list_all_authors) {
+            // get entries before options are modified based on POST parameters
+            $result = $this->getEntries($options);
+            // mark $result as being up-to-date:
+            $options_modified = false;
+
+            $surnames = $this->getSurnames($result);
+            $original_authors = implode("|", $surnames);
+        }
 
         if (isset($_POST) && (papercite::array_get($_POST, "papercite_post_id", 0) == $post->ID)) {
             if (isset($_POST["papercite_author"]) && !empty($_POST["papercite_author"])) {
                 $selected_author = ($options["author"] = $_POST["papercite_author"]);
+                $options_modified = true;
             }
 
             if (isset($_POST["papercite_allow"]) && !empty($_POST["papercite_allow"])) {
                 $selected_type = ($options["allow"] = $_POST["papercite_allow"]);
+                $options_modified = true;
             }
         }
 
-        $result = $this->getEntries($options);
+        if ($options_modified) {
+            // reload entries because options have changed:
+            $result = $this->getEntries($options);
+        }
+        
         ob_start();
         ?>
         <form method="post" accept-charset="UTF-8">
