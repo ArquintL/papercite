@@ -1086,6 +1086,7 @@ class Papercite
 
         $original_authors = Papercite::array_get($options, "author", "");
         $original_allow = Papercite::array_get($options, "allow", "");
+        $filter_only_author = Papercite::array_get($options, "filter-only-author", false);
 
         if (isset($_POST) && (papercite::array_get($_POST, "papercite_post_id", 0) == $post->ID)) {
             if (isset($_POST["papercite_author"]) && !empty($_POST["papercite_author"])) {
@@ -1122,21 +1123,22 @@ class Papercite
                             }
                             ?>
                         </select></td>
-
-                    <td>Type:</td>
-                    <td><select name="papercite_allow" id="papercite_type">
-                            <option value="">ALL</option>
-                            <?php
-                            $types = preg_split("#\s*,\s*#", $original_allow);
-                            foreach ($types as $type) {
-                                print "<option value=\"" . htmlentities($type, ENT_QUOTES, "UTF-8") . "\"";
-                                if ($selected_type == $type) {
-                                    print " selected=\"selected\"";
-                                }
-                                print ">" . papercite_bibtype2string($type) . "</option>";
+                    <?php
+                    if (!$filter_only_author) {
+                        print "<td>Type:</td>";
+                        print "<td><select name=\"papercite_allow\" id=\"papercite_type\">";
+                        print "<option value=\"\">ALL</option>";
+                        $types = preg_split("#\s*,\s*#", $original_allow);
+                        foreach ($types as $type) {
+                            print "<option value=\"" . htmlentities($type, ENT_QUOTES, "UTF-8") . "\"";
+                            if ($selected_type == $type) {
+                                print " selected=\"selected\"";
                             }
-                            ?>
-                        </select></td>
+                            print ">" . papercite_bibtype2string($type) . "</option>";
+                        }
+                        print "</select></td>";
+                    }
+                    ?>    
                     <td><input type="submit" value="Filter"/></td>
                 </tr>
             </table>
