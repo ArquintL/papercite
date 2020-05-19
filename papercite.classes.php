@@ -427,7 +427,7 @@ class Papercite
                     $bibFile = $this->getCached($biburi, $timeout, $sslverify);
                 } else {
                     $biburi = preg_replace("#\\.bib$#", "", $biburi);
-                    $bibFile = $this->getDataFile("$biburi", "bib", "bib", "application/x-bibtex", $options);
+                    $bibFile = $this->getDataFile("$biburi", "bib", "bib", "text/plain", $options);
                 }
 
 
