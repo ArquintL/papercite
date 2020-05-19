@@ -1069,7 +1069,7 @@ class Papercite
     }
 
     /**
-     * Extracts lastnames of all creators from entries
+     * Extracts lastnames of all creators from entries (unsorted)
      */
     function getSurnames($entries)
     {
@@ -1120,6 +1120,7 @@ class Papercite
             $options_modified = false;
 
             $surnames = $this->getSurnames($result);
+            sort($surnames);
             $original_authors = implode("|", $surnames);
         }
 
